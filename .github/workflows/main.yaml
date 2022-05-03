@@ -1,7 +1,8 @@
 name: AWS data downloader
 on:
   schedule:
-    - cron: "30 22 * * *"
+    - cron: "0 23 */1 * *" # Every day at 23:00 UTC
+  workflow_dispatch:
 
 jobs:
   download-data:
