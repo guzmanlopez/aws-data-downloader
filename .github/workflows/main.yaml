@@ -1,7 +1,7 @@
 name: AWS data downloader
 on:
   schedule:
-    - cron: "25 22 * * *"
+    - cron: "30 22 * * *"
 
 jobs:
   download-data:
