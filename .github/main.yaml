@@ -1,0 +1,41 @@
+name: AWS data downloader
+on:
+  schedule:
+    - cron: "20 19 * * *"
+
+jobs:
+  download-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@master
+        with:
+          r-version: 'release'
+          
+      - name: Setup renv
+        run: |
+          install.packages('remotes')
+          remotes::install_github("rstudio/renv")
+        shell: Rscript {0}
+        
+      - uses: actions/cache@v2
+        with:
+          path: ~/.local/share/renv
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-renv-
+      
+      - name: Install dependencies
+        run: renv::restore()
+        shell: Rscript {0}
+  
+      - name: Run data downloader
+        run: source("R/get_meteo_data_from_aws.R")
+        shell: Rscript {0}
+      
+      - name: Commit files
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git diff-index --quiet HEAD || (git commit -m "update data" && git push)
