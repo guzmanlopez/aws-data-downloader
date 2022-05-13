@@ -1,5 +1,6 @@
 library(dplyr)
 library(glue)
+library(here)
 library(httr)
 library(lubridate)
 library(readr)
@@ -7,20 +8,9 @@ library(rvest)
 library(stringr)
 library(xml2)
 
+source(here("R", "utils.R"))
 
 url <- "https://meteo.armada.mil.uy/{weather_station_url}.php"
-
-format_datetime <- function(datetime) {
-  datetime <-
-    datetime %>%
-    str_replace_all(" -03", "") %>%
-    str_replace_all("-", "") %>%
-    str_replace_all(":", "") %>%
-    str_replace_all(" ", "")
-  
-  return(datetime)
-  
-}
 
 get_meteo_data_from_aws <- function(weather_station = "La Paloma",
                                     timeout = 60,
@@ -30,14 +20,14 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
   ))
   
   if (weather_station == "Punta Brava") {
-    weather_station_url <- "index" # nolint
+    weather_station_url <- "index"
   } else if (weather_station == "La Paloma") {
     weather_station_url <- "Est2Armada"
   } else if (weather_station == "Colonia") {
     weather_station_url <- "Est3Armada"
   } else {
     stop(
-      "Nombre de estación meteorológica inválida. Las opciones posibles son: 'Punta Brava', 'La Paloma', o 'Colonia'." # nolint
+      "Nombre de estación meteorológica inválida. Las opciones posibles son: 'Punta Brava', 'La Paloma', o 'Colonia'."
     )
   }
   
@@ -58,14 +48,16 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
       dec = ".",
       fill = TRUE
     ) %>%
-    rename(
-      fecha = Fecha,
-      temperatura = `T (°C)`,
-      humedad = `H (%)`,
-      presion = `P (hPa)`,
-      vel_viento = `WS (kts)`,
-      dir_viento = `DV (°)`
-    ) %>%
+    rename(any_of(
+      c(
+        fecha = "Fecha",
+        temperatura = "T (°C)",
+        humedad = "H (%)",
+        presion = "P (hPa)",
+        vel_viento = "WS (kts)",
+        dir_viento = "DV (°)"
+      )
+    )) %>%
     select(-`DV (img)`) %>%
     mutate(dir_viento_2 = str_extract(dir_viento, "[A-Z]+")) %>%
     mutate(dir_viento = str_extract(dir_viento, "[0-9]+")) %>%
@@ -73,7 +65,7 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
   
   date_from <- min(sohma_meteo_table$fecha)
   date_to <- max(sohma_meteo_table$fecha)
-  message(glue("Observaciones desde {date_from} a {date_to}.")) # nolint
+  message(glue("Observaciones desde {date_from} a {date_to}."))
   
   # Write meteo data
   if (write) {
@@ -81,12 +73,14 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
       dir.create("output")
     }
     
-    weather_station <- str_replace_all(str_to_lower(weather_station), " ", "_")
+    weather_station <-
+      str_replace_all(str_to_lower(weather_station), " ", "_")
     date_from <- format_datetime(date_from)
     date_to <- format_datetime(date_to)
-    file_name <- glue("meteo_{weather_station}_{date_from}_{date_to}.csv")
+    file_name <-
+      glue("meteo_{weather_station}_{date_from}_{date_to}.csv")
     message(glue("Guardando datos en archivo {file_name}."))
-    readr::write_csv(x = sohma_meteo_table, file = here::here("output", file_name))
+    readr::write_csv(x = sohma_meteo_table, file = here("output", file_name))
   }
   
   return(sohma_meteo_table)
@@ -96,5 +90,5 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
 
 # Download data for different weather stations
 for (weather_station in c("La Paloma", "Punta Brava", "Colonia")) {
-   get_meteo_data_from_aws(weather_station = weather_station)
+  get_meteo_data_from_aws(weather_station = weather_station)
 }

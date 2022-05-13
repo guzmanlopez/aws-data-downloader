@@ -32,8 +32,12 @@ jobs:
         run: renv::restore()
         shell: Rscript {0}
   
-      - name: Run AWS data downloader
+      - name: Run AWS data downloader for meteo
         run: source("R/get_meteo_data_from_aws.R")
+        shell: Rscript {0}
+      
+      - name: Run AWS data downloader for tide
+        run: source("R/get_tide_data.R")
         shell: Rscript {0}
       
       - name: Commit files
