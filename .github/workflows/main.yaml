@@ -40,6 +40,10 @@ jobs:
         run: source("R/get_tide_data.R")
         shell: Rscript {0}
       
+      - name: Run data processing
+        run: source("R/data_processing.R")
+        shell: Rscript {0}
+      
       - name: Commit files
         run: |
           git config --local user.email "actions@github.com"

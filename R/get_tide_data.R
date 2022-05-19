@@ -1,5 +1,4 @@
 library(dplyr)
-library(glue)
 library(here)
 library(httr)
 library(lubridate)
@@ -15,7 +14,7 @@ url <- "https://meteo.armada.mil.uy/{tide_station_url}.php"
 get_tide_data <- function(tide_station = "La Paloma",
                           timeout = 60,
                           write = TRUE) {
-  message(glue(
+  message(str_glue(
     "Descargando datos de nivel del mar de la estación '{tide_station}'."
   ))
   
@@ -30,7 +29,7 @@ get_tide_data <- function(tide_station = "La Paloma",
   }
   
   sohma_tide_html <- POST(
-    url = glue(url),
+    url = str_glue(url),
     body = "48h=48h&oculto=",
     content_type("application/x-www-form-urlencoded"),
     httr::timeout(timeout)
@@ -55,7 +54,7 @@ get_tide_data <- function(tide_station = "La Paloma",
   
   date_from <- min(sohma_tide_table$fecha)
   date_to <- max(sohma_tide_table$fecha)
-  message(glue("Observaciones desde {date_from} a {date_to}."))
+  message(str_glue("Observaciones desde {date_from} a {date_to}."))
   
   # Write tide data
   if (write) {
@@ -68,8 +67,8 @@ get_tide_data <- function(tide_station = "La Paloma",
     date_from <- format_datetime(date_from)
     date_to <- format_datetime(date_to)
     file_name <-
-      glue("tide_{tide_station}_{date_from}_{date_to}.csv")
-    message(glue("Guardando datos en archivo {file_name}."))
+      str_glue("tide_{tide_station}_{date_from}_{date_to}.csv")
+    message(str_glue("Guardando datos en archivo '{file_name}'."))
     readr::write_csv(x = sohma_tide_table, file = here("output", file_name))
   }
   
