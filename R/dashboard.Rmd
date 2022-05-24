@@ -1,0 +1,135 @@
+---
+title: "Datos meteorológicos y mareográficos"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: bootstrap
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(flexdashboard)
+library(here)
+library(highcharter)
+library(readr)
+
+source(here("R", "utils.R"))
+
+data <-
+  readr::read_csv(
+    here("output", "aggregated", "historical.csv"),
+    progress = TRUE,
+    show_col_types = FALSE
+  ) %>%
+  select(
+    fecha,
+    estacion,
+    temperatura,
+    humedad,
+    presion,
+    vel_viento,
+    dir_viento,
+    dir_viento_2,
+    marea
+  ) %>%
+  mutate(presion = ifelse(presion == 0, NA, presion)) %>%
+  mutate(humedad = ifelse(humedad == 0 |
+                            humedad > 100, NA, humedad))
+
+station_names <- unique(data$estacion)
+
+data <-
+  data %>%
+  group_split(estacion) %>%
+  purrr::set_names(station_names)
+
+```
+
+La Paloma
+===================================== 
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica La Paloma, Rocha
+
+```{r}
+create_station_chart(data, c("meteo la paloma", "tide la paloma"))
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica La Paloma, Rocha
+
+```{r}
+create_wind_chart(data, "meteo la paloma")
+```
+
+
+Punta Brava / Punta Lobos
+===================================== 
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica Punta Brava / Estación Mareográfica Punta Lobos, Montevideo
+
+```{r}
+create_station_chart(data, c("meteo punta brava", "tide punta lobos"))
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica Punta Brava
+
+```{r}
+create_wind_chart(data, "meteo punta brava")
+```
+
+
+Colonia
+===================================== 
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica Colonia
+
+```{r}
+create_station_chart(data, "meteo colonia")
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Estación Meteorológica Colonia
+
+```{r}
+create_wind_chart(data, "meteo colonia")
+```
+
+
+Descargar datos
+===================================== 
+
+Row {data-height=1000}
+-----------------------------------------------------------------------
+
+```{r}
+library(DT)
+
+datatable(
+  data %>% purrr::map_df(~ bind_rows(.x)),
+  extensions = "Buttons",
+  options = list(
+    dom = "Bfrtip",
+    buttons = c("csv", "excel"),
+    pageLength = 50
+  )
+)
+```
