@@ -1,3 +1,5 @@
+[![AWS data downloader](https://github.com/guzmanlopez/aws-data-downloader/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/guzmanlopez/aws-data-downloader/actions/workflows/main.yaml) [![pages-build-deployment](https://github.com/guzmanlopez/aws-data-downloader/actions/workflows/pages/pages-build-deployment/badge.svg?branch=main)](https://github.com/guzmanlopez/aws-data-downloader/actions/workflows/pages/pages-build-deployment)
+
 # Automatic Weather Station data downloader
 
 El objetivo de este código es descargar periódicamente (24 horas) los datos meteorológicos y mareográficos generados por el Servicio de Oceanografía, Hidrografía y Meteorología de la Armada ([SOHMA](https://sohma.armada.mil.uy/), Uruguay) para su respaldo y fácil acceso por parte de la comunidad.
