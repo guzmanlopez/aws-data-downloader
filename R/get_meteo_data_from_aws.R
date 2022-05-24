@@ -17,7 +17,7 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
   message(str_glue(
     "Descargando datos meteorológicos de la estación '{weather_station}'."
   ))
-  
+
   if (weather_station == "Punta Brava") {
     weather_station_url <- "index"
   } else if (weather_station == "La Paloma") {
@@ -29,14 +29,14 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
       "Nombre de estación meteorológica inválida. Las opciones posibles son: 'Punta Brava', 'La Paloma', o 'Colonia'."
     )
   }
-  
+
   sohma_meteo_html <- POST(
     url = str_glue(url),
     body = "48h=48h&oculto=&Temperatura=Temperatura&Humedad=Humedad",
     content_type("application/x-www-form-urlencoded"),
     httr::timeout(timeout)
   )
-  
+
   sohma_meteo_table <-
     xml2::read_html(x = sohma_meteo_html) %>%
     rvest::html_node("#tableDatos") %>%
@@ -61,17 +61,17 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
     mutate(dir_viento_2 = str_extract(dir_viento, "[A-Z]+")) %>%
     mutate(dir_viento = str_extract(dir_viento, "[0-9]+")) %>%
     mutate(fecha = dmy_hms(fecha, tz = "America/Montevideo"))
-  
+
   date_from <- min(sohma_meteo_table$fecha)
   date_to <- max(sohma_meteo_table$fecha)
   message(str_glue("Observaciones desde {date_from} a {date_to}."))
-  
+
   # Write meteo data
   if (write) {
     if (!dir.exists("output")) {
       dir.create("output")
     }
-    
+
     weather_station <-
       str_replace_all(str_to_lower(weather_station), " ", "_")
     date_from <- format_datetime(date_from)
@@ -81,9 +81,9 @@ get_meteo_data_from_aws <- function(weather_station = "La Paloma",
     message(str_glue("Guardando datos en archivo '{file_name}'."))
     readr::write_csv(x = sohma_meteo_table, file = here("output", file_name))
   }
-  
+
   return(sohma_meteo_table)
-  
+
 }
 
 

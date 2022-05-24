@@ -43,6 +43,10 @@ jobs:
       - name: Run data processing
         run: source("R/data_processing.R")
         shell: Rscript {0}
+
+      - name: Run dashboard builder
+        run: source("R/dashboard_builder.R")
+        shell: Rscript {0}
       
       - name: Commit files
         run: |

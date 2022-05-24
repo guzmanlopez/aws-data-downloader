@@ -39,9 +39,9 @@ data <-
   mutate(humedad = ifelse(humedad == 0 |
                             humedad > 100, NA, humedad))
 
-station_names <- unique(data$estacion) 
+station_names <- unique(data$estacion)
 
-data <- 
+data <-
   data %>%
   group_split(estacion) %>%
   purrr::set_names(station_names)
@@ -54,16 +54,16 @@ La Paloma
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### La Plaoma
+### Estación Meteorológica La Paloma, Rocha
 
 ```{r}
-create_station_chart(data, c("meteo la paloma", "tide la paloma"))  
+create_station_chart(data, c("meteo la paloma", "tide la paloma"))
 ```
 
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### La Paloma
+### Estación Meteorológica La Paloma, Rocha
 
 ```{r}
 create_wind_chart(data, "meteo la paloma")
@@ -76,7 +76,7 @@ Punta Brava / Punta Lobos
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### Punta Brava / Punta Lobos
+### Estación Meteorológica Punta Brava / Estación Mareográfica Punta Lobos, Montevideo
 
 ```{r}
 create_station_chart(data, c("meteo punta brava", "tide punta lobos"))
@@ -85,7 +85,7 @@ create_station_chart(data, c("meteo punta brava", "tide punta lobos"))
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### Punta Brava
+### Estación Meteorológica Punta Brava
 
 ```{r}
 create_wind_chart(data, "meteo punta brava")
@@ -98,7 +98,7 @@ Colonia
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### Colonia
+### Estación Meteorológica Colonia
 
 ```{r}
 create_station_chart(data, "meteo colonia")
@@ -107,7 +107,7 @@ create_station_chart(data, "meteo colonia")
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### Colonia
+### Estación Meteorológica Colonia
 
 ```{r}
 create_wind_chart(data, "meteo colonia")
@@ -124,11 +124,11 @@ Row {data-height=1000}
 library(DT)
 
 datatable(
-  data %>% purrr::map_df(~ bind_rows(.x)), 
-  extensions = 'Buttons',
+  data %>% purrr::map_df(~ bind_rows(.x)),
+  extensions = "Buttons",
   options = list(
-    dom = 'Bfrtip',
-    buttons = c('csv', 'excel'),
+    dom = "Bfrtip",
+    buttons = c("csv", "excel"),
     pageLength = 50
   )
 )
