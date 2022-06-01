@@ -1,4 +1,3 @@
-
 format_datetime <- function(datetime) {
   datetime <-
     datetime %>%
@@ -17,19 +16,19 @@ create_station_chart <-
            station = c("meteo la paloma", "tide la paloma")) {
     meteo_station = station[which(!is.na(stringr::str_match(station, "meteo")))]
     tide_station = station[which(!is.na(stringr::str_match(station, "tide")))]
-
+    
     if (length(meteo_station) == 1) {
       meteo <- data[[meteo_station]]
     } else {
       meteo <- data.frame(fecha = NA, marea = NA)
     }
-
+    
     if (length(tide_station) == 1) {
       tide <- data[[tide_station]]
     } else {
       tide <- data.frame(fecha = as.Date(NA), marea = NA)
     }
-
+    
     highchart(type = "stock", theme = hc_theme_ggplot2()) %>%
       hc_add_series(
         data = meteo %>% select(fecha, temperatura),
@@ -90,6 +89,35 @@ create_station_chart <-
         relative = 1
       ) %>%
       hc_xAxis(title = list(text = "Fecha"), type = "datetime") %>%
+      hc_rangeSelector(
+        verticalAlign = "top",
+        selected = 0,
+        buttons = list(
+          list(
+            type = "day",
+            count = 1,
+            text = "Día",
+            title = "Ver un día"
+          ),
+          list(
+            type = "week",
+            count = 1,
+            text = "Sem.",
+            title = "Ver una semana"
+          ),
+          list(
+            type = "month",
+            count = 1,
+            text = "Mes",
+            title = "Ver un mes"
+          ),
+          list(
+            type = "all",
+            text = "Todo",
+            title = "Ver todos los datos"
+          )
+        )
+      ) %>%
       hc_tooltip(crosshairs = TRUE, valueDecimals = 2) %>%
       hc_credits(
         enabled = TRUE,
@@ -104,7 +132,7 @@ create_station_chart <-
 create_wind_chart <-
   function(data, station = "meteo la paloma") {
     meteo <- data[[station]]
-
+    
     highchart(type = "stock", theme = hc_theme_ggplot2()) %>%
       hc_add_series(
         data = meteo %>% select(fecha, vel_viento, dir_viento),
@@ -126,6 +154,35 @@ create_wind_chart <-
         relative = 1
       ) %>%
       hc_xAxis(title = list(text = "Fecha"), type = "datetime") %>%
+      hc_rangeSelector(
+        verticalAlign = "top",
+        selected = 0,
+        buttons = list(
+          list(
+            type = "day",
+            count = 1,
+            text = "Día",
+            title = "Ver un día"
+          ),
+          list(
+            type = "week",
+            count = 1,
+            text = "Sem.",
+            title = "Ver una semana"
+          ),
+          list(
+            type = "month",
+            count = 1,
+            text = "Mes",
+            title = "Ver un mes"
+          ),
+          list(
+            type = "all",
+            text = "Todo",
+            title = "Ver todos los datos"
+          )
+        )
+      ) %>%
       hc_credits(
         enabled = TRUE,
         text = "Fuente: Servicio de Oceanografía, Hidrografía y Meteorología de la Armada (SOHMA)",
