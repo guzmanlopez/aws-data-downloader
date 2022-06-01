@@ -1,0 +1,5 @@
+*.Rmd linguist-detectable=false
+*.HTML linguist-detectable=false
+*.R linguist-detectable=true
+*.RMD linguist-detectable=false
+*.html linguist-detectable=false
