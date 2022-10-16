@@ -120,7 +120,7 @@ Descargar datos
 Row {data-height=1000}
 -----------------------------------------------------------------------
 
-```{r}
+```{r, eval=FALSE}
 library(DT)
 
 datatable(
